@@ -1,7 +1,6 @@
 import arc
 import os
 import json
-import time
 from wasmtime import Store, Module, Instance, Linker, WasiConfig, Engine
 
 
@@ -10,12 +9,6 @@ def handler(req, context):
     stdin_path = './.stdin.txt'
     stderr_path = './.stderr.txt'
     element_path = './elements'
-    with open(stdin_path, 'w') as file:
-        file.write('')
-    with open(stdout_path, 'w') as file:
-        file.write('')
-    with open(stderr_path, 'w') as file:
-        file.write('')
 
     store = Store()
     config = WasiConfig()
@@ -39,29 +32,13 @@ def handler(req, context):
         file.write(payload)
 
     instance.exports(store)["_start"](store)
-    wait_ssr()
 
+    output = ""
     with open(stdout_path, 'r') as file:
         output = file.read()
 
 
     return arc.http.res(req, {"html": output})
-
-
-def wait_ssr():
-    stderr_path = './.stderr.txt'
-    while True:
-        try:
-            with open(stderr_path, 'r') as file:
-                content = file.read()
-                if content.strip() == "--SSR Complete--":
-                    break
-        except FileNotFoundError:
-            print("File not found. Waiting for it to be created.")
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        
-        time.sleep(1)
 
 
 def read_elements(directory):

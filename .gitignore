@@ -1,0 +1,12 @@
+.DS_Store
+node_modules/
+__pycache__/
+pyvenv.cfg
+.env
+.stdin.txt
+.stdout.txt
+.stderr.txt
+lib/
+bin/
+include/
+package-lock.json
